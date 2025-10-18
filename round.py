@@ -20,7 +20,7 @@ for filename in os.listdir(input_folder):
     hue, sat, val = img.convert('HSV').split()
     # convert hue from 0.0 - 255.0 to 0.0 - 360.0
     average_hue = ImageStat.Stat(hue).mean[0] * (360 / 255)
-    # convert saturation from 0.0 - 255.0 to 0.0 - 1.0
+    # normalize saturation from 0.0 - 255.0 to 0.0 - 1.0
     average_sat = ImageStat.Stat(sat).mean[0] * (1 / 255)
     block_name = filename.split('.')[0]
     blocks.append({
@@ -30,11 +30,27 @@ for filename in os.listdir(input_folder):
         'img': img
     })
 
-for index, block in enumerate(blocks):
-    print(block['hue'], block['sat'])
+for block in blocks:
+    img = block['img']
+    # get polar coordinates
+    r = block['sat']
+    theta = block['hue']
+    # convert polar coordinates to cartesian
+    x = r * math.cos(theta)
+    y = r * math.sin(theta)
+    # normalize -1.0 - 1.0 to 0.0 - 1.0
+    x = (x - -1) / (1 - -1)
+    y = (y - -1) / (1 - -1)
+    # multiply cartesian coordinates based on image size
+    x = x * background_width_pixels
+    y = y * background_width_pixels
+    # correct for placing based on center of texture instead of top left
+    x = x - texture_size / 2
+    y = y - texture_size / 2
+    # convert float to int
+    x = math.floor(x)
+    y = math.floor(y)
+    # paste image onto background image in position corresponding to colors
+    composite_image.paste(img, (x, y), img)
 
-# place blocks in polar coordinates based on hue and saturation, with max radius of 1
-
-# convert polar coordinates to cartesian and place based on pixel size of background image
-
-# composite_image.save(f'{output_folder}/composite.png')
+composite_image.save(f'{output_folder}/round.png')
