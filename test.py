@@ -1,7 +1,15 @@
+import math
 import os
 from PIL import Image, ImageStat
 
 input_folder = 'input'
+output_folder = 'output'
+texture_size = 16
+
+number_of_textures = len(os.listdir(input_folder))
+background_size = math.ceil(math.sqrt(number_of_textures)) * texture_size
+print(background_size)
+background_image = Image.new("RGBA", (background_size, background_size), (0, 0, 0, 0))
 
 output_data = []
 
@@ -18,9 +26,8 @@ for filename in os.listdir(input_folder):
         'hue': hue
     })
 
-def sorter(list):
-    return list['hue']
+background_image.save(f'{output_folder}/composite.png')
 
-output_data.sort(key=sorter)
+output_data.sort(key=(lambda x: x['hue']))
 
 print(output_data)
