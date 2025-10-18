@@ -46,11 +46,10 @@ for block in blocks:
     x = (x - -1) / (1 - -1)
     y = (y - -1) / (1 - -1)
     # multiply cartesian coordinates based on image size
-    x = x * background_width_pixels
-    y = y * background_width_pixels
-    # correct for placing based on center of texture instead of top left
-    x = x - texture_size / 2
-    y = y - texture_size / 2
+    # pad background width by half block on each side to prevent cutting off texture
+    available_pixels = background_width_pixels - texture_size
+    y = y * available_pixels
+    x = x * available_pixels
     # convert float to int
     x = math.floor(x)
     y = math.floor(y)
