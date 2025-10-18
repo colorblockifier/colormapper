@@ -1,18 +1,22 @@
 import math
 import os
+import sys
 from PIL import Image, ImageStat
+
+if len(sys.argv) < 2:
+    print("Provide an output image width in blocks")
+    sys.exit(1)
+background_width_blocks = int(sys.argv[1])
 
 input_folder = 'input'
 output_folder = 'output'
 texture_size = 16
-background_width_blocks = 33
 
 number_of_blocks = len(os.listdir(input_folder))
-
 background_width_pixels = background_width_blocks * texture_size
-composite_image = Image.new("RGBA", (background_width_pixels, background_width_pixels), (0, 0, 0, 0))
-
 blocks = []
+
+composite_image = Image.new("RGBA", (background_width_pixels, background_width_pixels), (0, 0, 0, 0))
 
 for filename in os.listdir(input_folder):
     path = os.path.join(input_folder, filename)
