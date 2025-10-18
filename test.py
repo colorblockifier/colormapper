@@ -8,26 +8,27 @@ texture_size = 16
 
 number_of_textures = len(os.listdir(input_folder))
 background_size = math.ceil(math.sqrt(number_of_textures)) * texture_size
-print(background_size)
-background_image = Image.new("RGBA", (background_size, background_size), (0, 0, 0, 0))
+composite_image = Image.new("RGBA", (background_size, background_size), (0, 0, 0, 0))
 
-output_data = []
-
-def get_average_hue(filename):
-    img = Image.open(filename).convert('RGB').convert('HSV')
-    h, s, v = img.split()
-    return ImageStat.Stat(h).mean[0]
+textures = []
 
 for filename in os.listdir(input_folder):
     path = os.path.join(input_folder, filename)
-    hue = get_average_hue(path)
-    output_data.append({
-        'filename': filename,
-        'hue': hue
+    img = Image.open(path).convert('RGBA')
+    h, s, v = img.convert('HSV').split()
+    average_hue = ImageStat.Stat(h).mean[0]
+    texture_name = filename.split('.')[0]
+    textures.append({
+        'name': texture_name,
+        'hue': average_hue,
+        'image': img
     })
 
-background_image.save(f'{output_folder}/composite.png')
+textures.sort(key=(lambda x: x['hue']))
 
-output_data.sort(key=(lambda x: x['hue']))
+for texture in textures:
+    composite_image.paste(texture['image'], (0, 0), texture['image'])
 
-print(output_data)
+composite_image.save(f'{output_folder}/composite.png')
+
+# print(textures)
