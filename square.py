@@ -35,4 +35,4 @@ for index, block in enumerate(blocks):
     row_pixels = row_blocks * texture_size
     composite_image.paste(img, (col_pixels, row_pixels), img)
 
-composite_image.save(f'{output_folder}/composite.png')
+composite_image.save(f'{output_folder}/square.png')
